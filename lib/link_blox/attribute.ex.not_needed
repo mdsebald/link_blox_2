@@ -1,0 +1,28 @@
+defmodule LinkBlox.Attribute do
+  @moduledoc """
+    The LinkBlox Attribute is a structure for holding a block value and associated meta-data
+    LinkBlox types are defined by a set of attributes
+    Each LinkBlox block type is comprised of a set of attributes and associated code
+    All blocks share a common set of attributes plus a set of attributes specific to the block type
+  """
+  # unique atom
+  defstruct id: nil,
+            # string
+            description: nil,
+            # [:config, :input, :output, :private]
+            group: nil,
+            # [:any, :bool, :int, :float, :string, :enum, ...]
+            type: nil,
+            # is attribute an array of values or not
+            array: false,
+            # range of aceptable values
+            range: nil,
+            # is value imutable or not
+            read_only: false,
+            # current value
+            value: nil,
+            # fallback value, when current value is nil
+            def_value: nil,
+            # string
+            units: nil
+end
