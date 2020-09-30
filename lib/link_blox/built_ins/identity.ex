@@ -8,10 +8,10 @@ defmodule LinkBlox.BuiltIns.Identity do
   """
 
   @doc """
-
+    Create the block, i.e. add the block type specific attributes
+    to the common block attributes that have already been created
   """
-
-  def create(attribs) do
+  def create(attribs, _initial_values) do
     # Only has one input attribute
     Attribs.add(attribs, :input, :inputs, {:empty, :empty})
     :ok
@@ -22,18 +22,17 @@ defmodule LinkBlox.BuiltIns.Identity do
   """
   @spec execute(Types.block_attribs(), Types.exec_method()) :: :ok | {:error, atom()}
   def execute(block_attribs, :disable) do
-    Attribs.update_all_outputs(block_attribs, nil, :disabled)
+    Outputs.update_all_outputs(block_attribs, nil, :disabled)
     :ok
   end
 
   def execute(block_attribs, _exec_method) do
     case Attribs.get_any_type(block_attribs, :input) do
     {:ok, value} ->
-      Attribs.set_value_normal(block_attribs, value)
-      :ok
+      Outputs.set_value_normal(block_attribs, value)
+
     {:error, _reason} ->
-      Outputs1 = Attribs.set_value_status(block_attribs, nil, :input_err)
-      :ok
+      Outputs.set_value_status(block_attribs, nil, :input_err)
     end
   end
 
@@ -234,4 +233,5 @@ defmodule LinkBlox.BuiltIns.Identity do
   -endif.
 
   """
+  def some_function, do: :nothing
 end

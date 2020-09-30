@@ -39,9 +39,9 @@ defmodule LinkBlox do
       @doc """
         Create a set of block attributes for this block type
 
-        ## Override this function to create the block type specific attribute
+        Override this function to create the block type specific attributes
 
-        ## Inititial values are used to override the default attribute values
+        Inititial values are used to override the default attribute values
       """
       @spec create(Types.block_attribs(), []) :: :ok
       def create(attribs, initial_values \\ []) do
@@ -51,10 +51,10 @@ defmodule LinkBlox do
       @doc """
         Upgrade block attribute values, when block code and block data versions are different
 
-        ## Override this function to change, add, or delete attributes as need to make
-           the previous version's attributes compatible with the current version's code
+        Override this function to change, add, or delete attributes as need to make
+        the previous version's attributes compatible with the current version's code
 
-        ## Default is to just change the version in the list of attribute's to match the code's version
+        Default is to just change the version in the list of attribute's to match the code's version
       """
       @spec upgrade(Types.block_attribs()) :: :ok | {:error, atom()}
       def upgrade(attribs) do
@@ -75,9 +75,9 @@ defmodule LinkBlox do
       @doc """
         Initialize the block attributes prior to starting block execution
 
-        ## Override this function to allocate resources, update attribute values based on related attribute values, etc
+        Override this function to allocate resources, update attribute values based on related attribute values, etc
 
-        ## `initialize:1` should be called after creation and each time any config value is changed
+        `initialize:1` should be called after creation and each time any config value is changed
 
         For example: if a config value that specifies the quantity of input values changes,
         initialize() must adjust the corresponding list of input values size to match
@@ -90,9 +90,9 @@ defmodule LinkBlox do
       @doc """
         Execute the block, i.e. read inputs and write outputs
 
-        ## Override this function to implement the block type specific functionality
+        Override this function to implement the block type specific functionality
 
-        ## Include a function defintion to disable the block, may be block type specific actions to be done on block disable
+        Include a function defintion to disable the block, may be block type specific actions to be done on block disable
       """
       @spec execute(Types.block_attribs(), Types.exec_method()) :: :ok | {:error, atom()}
       def execute(attribs, :disable) do
@@ -117,9 +117,9 @@ defmodule LinkBlox do
       @doc """
         Block received a handle_info message
 
-        ## If this block type does not expect handle_info messages, just log a warning
+        If this block type does not expect handle_info messages, just log a warning.
 
-        ## Override this function to handle the message if handle_info messages are expected
+        Override this function to handle the message if handle_info messages are expected.
       """
       @spec handle_info(info :: term(), Types.block_attribs) :: {:noreply, Types.block_attribs()}
       def handle_info(info, attribs) do
