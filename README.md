@@ -1,10 +1,12 @@
 # LinkBlox 2
 
-## Under Construction
+![LinkBLox Logo](assets/images/link_blox_logo.png)
+
+## Update Original LinkBlox Erlang Application
 
 ### Tasks and Goals
 
-	* Translate to / Write in Elixir
+	* Translate to Elixir
 	* Use Elixir documentation features
 	* Create LinkBlox as a library
 		* Dependency to be included when creating a block type
@@ -17,7 +19,9 @@
 	* Implement inter-block links using Registry
 	* Allow "tweak" function to be included in inter block links
 		* Modify linked block output value, before writing it to block input
-	* Allow different blocks of different types, to have the same name
 	* Allow creation of composite block types
 		* i.e. collection of blocks to be created and manipulated as a unit 
 	* Add security to user interface, login?
+
+#### Under Construction
+
