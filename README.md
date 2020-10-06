@@ -1,6 +1,6 @@
 # LinkBlox 2
 
-![LinkBLox Logo](assets/images/link_blox_logo.png)
+![LinkBLox Logo](assets/images/link_blox_logo_125.png)
 
 ## Update Original LinkBlox Erlang Application
 
