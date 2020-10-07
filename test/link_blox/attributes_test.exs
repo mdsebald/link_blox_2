@@ -9,7 +9,10 @@ defmodule LinkBloxTest.AttributesTest do
 
     # get common block attribute values
     {:ok, expected_version} = Version.parse("1.2.3")
-    assert Configs.name_module_version(attributes) == {:test_block, LinkBloxTest.BlockTypeTest, expected_version}
+
+    assert Configs.name_module_version(attributes) ==
+             {:test_block, LinkBloxTest.BlockTypeTest, expected_version}
+
     assert Attributes.get_value(attributes, :disable) == {:ok, true}
     assert Attributes.get_value(attributes, :exec_interval) == {:ok, 0}
     assert Attributes.get_value(attributes, :value) == {:ok, nil}
@@ -40,8 +43,12 @@ defmodule LinkBloxTest.AttributesTest do
     assert Attributes.get_value(attributes, :output_int) == {:ok, 123}
 
     #   array values
-    assert Attributes.set_value(attributes, {:config_int_array, -1}, 123) == {:error, :invalid_index}
-    assert Attributes.set_value(attributes, {:config_int_array, 4}, 123) == {:error, :invalid_index}
+    assert Attributes.set_value(attributes, {:config_int_array, -1}, 123) ==
+             {:error, :invalid_index}
+
+    assert Attributes.set_value(attributes, {:config_int_array, 4}, 123) ==
+             {:error, :invalid_index}
+
     assert Attributes.set_value(attributes, {:config_int_array, 1}, 123)
     assert Attributes.get_value(attributes, {:config_int_array, 1}) == {:ok, 123}
     assert Attributes.set_value(attributes, {:input_int_array, 2}, -123) == :ok

@@ -16,15 +16,15 @@ defmodule LinkBloxTest.BlockTypeTest do
   def create(attributes) do
     # add configs
     Attributes.create(attributes, :config_int, :configs, 0)
-    Attributes.create(attributes, :config_int_array, :configs, [1,2,3])
+    Attributes.create(attributes, :config_int_array, :configs, [1, 2, 3])
 
     # add inputs
     Attributes.create(attributes, :input_int, :inputs, {0, 0})
-    Attributes.create(attributes, :input_int_array, :inputs, [{1,1},{2,2},{3,3}])
+    Attributes.create(attributes, :input_int_array, :inputs, [{1, 1}, {2, 2}, {3, 3}])
 
     # add outputs
     Attributes.create(attributes, :output_int, :outputs, {0, []})
-    Attributes.create(attributes, :output_int_array, :outputs, [{1,[]},{2,[]},{3,[]}])
+    Attributes.create(attributes, :output_int_array, :outputs, [{1, []}, {2, []}, {3, []}])
     :ok
   end
 

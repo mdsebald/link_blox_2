@@ -9,7 +9,9 @@ defmodule LinkBloxTest.BuiltIns.IdentityTest do
 
     # get common block attribute values
     {:ok, expected_version} = Version.parse("0.1.0")
-    assert Configs.name_module_version(attributes) == {:test_identity, LinkBlox.BuiltIns.Identity, expected_version}
+
+    assert Configs.name_module_version(attributes) ==
+             {:test_identity, LinkBlox.BuiltIns.Identity, expected_version}
 
     assert Attributes.set_value(attributes, :input, "this is a test") == :ok
     assert LinkBlox.BuiltIns.Identity.execute(attributes, :manual) == :ok

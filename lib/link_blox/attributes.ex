@@ -159,6 +159,7 @@ defmodule LinkBlox.Attributes do
           attribute_value_array()
   defp replace_array_value(array_values, index, new_value) do
     length = index - 1
+
     :lists.sublist(array_values, length) ++
       [new_value] ++
       :lists.nthtail(index, array_values)
