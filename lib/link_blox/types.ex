@@ -28,14 +28,57 @@ defmodule LinkBlox.Types do
       @type attribute_class() :: :configs | :inputs | :outputs | :private
 
       @typedoc "Attribute value is of attribute value type or list of attribute value types"
-      @type attribute_value() :: attribute_value_type() | [attribute_value_type()]
+      @type attribute_value_array() :: [attribute_value()]
+      @type attribute_value() :: config_value() | input_value() | output_value() | private_value()
+
+      @type config_value_array() :: [config_value()]
+      @type config_value() :: value()
+
+      @type input_value_array() :: [input_value()]
+      @type input_value() :: {value(), default_value :: value()}
+
+      @type output_value_array() :: [output_value()]
+      @type output_value() :: {value(), link_defs()}
+
+      @type private_value_array() :: [private_value()]
+      @type private_value() :: any()
+
+      @type link_defs() :: [link_def()]
+      @type link_def() :: {block_name(), attribute_id()}
+      @type empty_link() :: {}
+      @empty_link {}
+
+      @type block_values() :: [block_value()]
+      @type block_value() :: {attribute_id(), value()}
+
+      @type attrib_result_value() :: {:ok, value()} | attrib_errors()
+
+      @type attrib_errors() :: {:error, :not_found | :invalid_value | :invalid_index}
+
+      # Used to read block input values
+      @type input_errors() :: {:error, :not_found | :bad_link | :range | :bad_type | :not_input}
+
+      @type generic_input_value() :: {:ok, value()} | {:ok, nil} | input_errors()
+      @type integer_input_value() :: {:ok, integer()} | {:ok, nil} | input_errors()
+      @type float_input_value() :: {:ok, float()} | {:ok, nil} | input_errors()
+      @type boolean_input_value() :: {:ok, boolean()} | {:ok, nil} | input_errors()
+      @type string_input_value() :: {:ok, String.t()} | {:ok, nil} | input_errors()
+
+      # Used to read block configuration values
+      @type config_errors() :: {:error, :not_found | :range | :bad_type | :not_config}
+
+      @type generic_config_value() :: {:ok, value()} | config_errors()
+      @type integer_config_value() :: {:ok, integer()} | config_errors()
+      @type float_config_value() :: {:ok, float()} | config_errors()
+      @type boolean_config_value() :: {:ok, boolean()} | config_errors()
+      @type string_config_value() :: {:ok, String.t()} | config_errors()
 
       @typedoc "Block name must be unique accross all blocks created on the same node"
       @type block_name() :: atom()
 
       @typedoc "Attribute value types allowed"
-      @type attribute_value_type() ::
-              any()
+      @type value() ::
+              any() | nil
       # | atom()
       # | integer()
       # | float()
@@ -49,7 +92,7 @@ defmodule LinkBlox.Types do
       # | Version.t()
 
       @typedoc "Map of key/value pairs definining attribute characteristics"
-      @type attribute_metadata() :: %{}
+      @type attribute_metadata() :: map()
 
       @typedoc """
         Execute method defines the possible reasons for a block to be executed

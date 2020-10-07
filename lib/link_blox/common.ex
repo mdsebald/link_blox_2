@@ -26,10 +26,10 @@ defmodule LinkBlox.Common do
     # TODO: Check result of Attributes.add()?
 
     # Create common config attributes
-    Attributes.add(attributes, :block_name, :configs, name, %{readonly: true})
-    Attributes.add(attributes, :block_module, :configs, module, %{readonly: true})
-    Attributes.add(attributes, :version, :configs, module.version(), %{readonly: true})
-    Attributes.add(attributes, :description, :configs, "", %{readonly: true})
+    Attributes.create(attributes, :block_name, :configs, name, %{readonly: true})
+    Attributes.create(attributes, :block_module, :configs, module, %{readonly: true})
+    Attributes.create(attributes, :version, :configs, module.version(), %{readonly: true})
+    Attributes.create(attributes, :description, :configs, "", %{readonly: true})
 
     # Create common input attributes
     # Input attributes have a linked value and default value
@@ -42,20 +42,20 @@ defmodule LinkBlox.Common do
     # Default block to disabled, on create.
     # Set disable input to false in create function if you want block
     # to begin executing on create.
-    Attributes.add(attributes, :disable, :inputs, true, %{default_val: true})
+    Attributes.create(attributes, :disable, :inputs, {true, true})
 
     # exec_in:
     # Link exec_in to block that will execute this block.
     # May only be linked to the 'exec_out' block output value
     # value is the name of the block that executed this block
-    Attributes.add(attributes, :exec_in, :inputs, :empty, %{default_val: :empty})
+    Attributes.create(attributes, :exec_in, :inputs, {:empty, :empty})
 
     # exec_interval:
     # If > 0, execute block every 'exec_interval' milliseconds.
     # Used to execute a block at fixed intervals
     # instead of being executed via exec_out/exec_in link
     # or executed on change of input values
-    Attributes.add(attributes, :exec_interval, :inputs, 0, %{default_val: 0})
+    Attributes.create(attributes, :exec_interval, :inputs, {0, 0})
 
     # exec_in and exec_interval may both be used to execute the block.
     # They are not mutually exclusive.
@@ -69,13 +69,13 @@ defmodule LinkBlox.Common do
     # will be executed by this block, each time this block is executed
     # This output may only be linked to exec_in inputs
     # | signal | N/A | N/A |
-    Attributes.add(attributes, :exec_out, :outputs, false, %{links: []})
+    Attributes.create(attributes, :exec_out, :outputs, {false, []})
     # | enum | created | created, initialed, normal, ... |
-    Attributes.add(attributes, :status, :outputs, :created, %{links: []})
+    Attributes.create(attributes, :status, :outputs, {:created, []})
     # | enum | empty | manual, input_cos, timer, ...|
-    Attributes.add(attributes, :exec_method, :outputs, :empty, %{links: []})
+    Attributes.create(attributes, :exec_method, :outputs, {:empty, []})
     # | block type dependent | null | block type dependent |
-    Attributes.add(attributes, :value, :outputs, nil, %{links: []})
+    Attributes.create(attributes, :value, :outputs, {nil, []})
 
     # Call the module's create() function to create the attributes specific to the block type
     module.create(attributes)

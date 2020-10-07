@@ -61,7 +61,7 @@ defmodule LinkBlox do
       @spec upgrade(attributes()) :: :ok | {:error, atom()}
       def upgrade(attributes) do
         module_ver = version()
-        {block_name, block_module, block_ver} = Attributes.name_module_version(attributes)
+        {block_name, block_module, block_ver} = Configs.name_module_version(attributes)
 
         case Attributes.set_value(attributes, :version, version()) do
           :ok ->
@@ -135,7 +135,7 @@ defmodule LinkBlox do
       """
       @spec handle_info(info :: term(), attributes()) :: {:noreply, attributes()}
       def handle_info(info, attributes) do
-        {block_name, block_module} = Attributes.name_module(attributes)
+        {block_name, block_module} = Configs.name_module(attributes)
 
         Logger.warn(
           "Block type: #{inspect(block_module)} name: #{inspect(block_name)}, received unknown handle_info msg: #{

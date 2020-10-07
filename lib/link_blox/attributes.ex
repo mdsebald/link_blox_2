@@ -16,28 +16,27 @@ defmodule LinkBlox.Attributes do
   end
 
   @doc """
-    Add a new attribute to the list of attributes
+    create a new attribute in the block attributes
     returns true on success false if attribute name already exists
   """
-  @spec add(
+  @spec create(
           attributes(),
           attribute_name(),
           attribute_class(),
-          attribute_value(),
+          attribute_value() | attribute_value_array(),
           attribute_metadata()
         ) :: boolean()
-  def add(attributes, name, class, value, metadata) do
+  def create(attributes, name, class, value, metadata \\ %{}) do
     :ets.insert_new(attributes, {name, class, value, metadata})
   end
 
   @doc """
-    Get the whole attribute from the list of attributes
-    returns true on success false if attribute name does not exist
+    Read the raw attribute tuple from the block attributes
   """
-  @spec get(attributes(), attribute_name()) :: attribute() | nil
-  def get(attributes, name) do
-      # We expect a list of 1 element, anything else is an error
-      case :ets.lookup(attributes, name) do
+  @spec read(attributes(), attribute_name()) :: attribute() | nil
+  def read(attributes, name) do
+    # We expect a list of 1 element, anything else is an error
+    case :ets.lookup(attributes, name) do
       [attribute] -> attribute
       _error -> nil
     end
@@ -47,13 +46,10 @@ defmodule LinkBlox.Attributes do
     Update an attribute value in the list of attributes
     For array type attribute values, the whole array is updated
   """
-  @spec update(attributes(), attribute_name(), attribute_value()) :: :ok | {:error, :not_found}
+  @spec update(attributes(), attribute_name(), attribute_value() | attribute_value_array()) ::
+          boolean()
   def update(attributes, name, value) do
-    # The
-    case :ets.update_element(attributes, name, {@value_pos, value}) do
-      true -> :ok
-      _error -> {:error, :not_found}
-    end
+    :ets.update_element(attributes, name, {@value_pos, value})
   end
 
   @doc """
@@ -66,17 +62,18 @@ defmodule LinkBlox.Attributes do
   end
 
   @doc """
-    Get an attribute value from the list of attributes
+    Get an attribute value from the block attributes
   """
   @spec get_value(attributes(), attribute_id()) ::
           {:ok, attribute_value()} | {:error, :not_found | :invalid_index}
   def get_value(attributes, {name, index}) do
     # array value
-    case get(attributes, name) do
-      {^name, _class, value, _metadata} ->
-        if 0 < index && index <= length(value) do
+    case read(attributes, name) do
+      {^name, class, values, _metadata} ->
+        if 0 < index && index <= length(values) do
           # fetch() is zero based, index is 1 based
-          Enum.fetch(value, index - 1)
+          value = :lists.nth(index, values)
+          get_class_value(class, value)
         else
           {:error, :invalid_index}
         end
@@ -87,43 +84,67 @@ defmodule LinkBlox.Attributes do
   end
 
   def get_value(attributes, name) do
-    case get(attributes, name) do
-      {^name, _class, value, _metadata} -> {:ok, value}
+    # single value
+    case read(attributes, name) do
+      {^name, class, value, _metadata} -> get_class_value(class, value)
       nil -> {:error, :not_found}
     end
   end
 
+  # Parse out the value, based on the attribute class
+  defp get_class_value(:inputs, {value, _default_value}), do: {:ok, value}
+  defp get_class_value(:outputs, {value, _links}), do: {:ok, value}
+  defp get_class_value(_class, value), do: {:ok, value}
+
   @doc """
-    Get block name from attribute values
+    Set an attribute value in the block attributes
   """
-  @spec block_name(attributes()) :: block_name() | nil
-  def block_name(attributes) do
-    case get_value(attributes, :block_name) do
-      {:ok, block_name} -> block_name
-      _error -> nil
+  @spec set_value(attributes(), attribute_id(), value()) ::
+          :ok | {:error, :not_found | :invalid_index | :update_failed}
+  def set_value(attributes, {name, index}, new_value) do
+    # array value
+    case read(attributes, name) do
+      {^name, class, old_class_values, _metadata} ->
+        if 0 < index && index <= length(old_class_values) do
+          old_class_value = :lists.nth(index, old_class_values)
+          new_class_value = set_class_value(class, old_class_value, new_value)
+          new_class_values = replace_array_value(old_class_values, index, new_class_value)
+
+          case update(attributes, name, new_class_values) do
+            true -> :ok
+            false -> {:error, :update_failed}
+          end
+        else
+          {:error, :invalid_index}
+        end
+
+      nil ->
+        {:error, :not_found}
     end
   end
 
-  @doc """
-    Get block name and block module from attribute values
-  """
-  @spec name_module(attributes()) :: {block_name(), module()}
-  def name_module(attributes) do
-    {:ok, block_name} = get_value(attributes, :block_name)
-    {:ok, block_module} = get_value(attributes, :block_module)
-    {block_name, block_module}
+  def set_value(attributes, name, new_value) do
+    # non-array value
+    case read(attributes, name) do
+      {^name, class, old_class_value, _metadata} ->
+        new_class_value = set_class_value(class, old_class_value, new_value)
+
+        case update(attributes, name, new_class_value) do
+          true -> :ok
+          false -> {:error, :update_failed}
+        end
+
+      nil ->
+        {:error, :not_found}
+    end
   end
 
-  @doc """
-    Get block name, block module, and version from attribute values
-  """
-  @spec name_module_version(attributes()) :: {block_name(), module(), Version.t()}
-  def name_module_version(attributes) do
-    {:ok, block_name} = get_value(attributes, :block_name)
-    {:ok, block_module} = get_value(attributes, :block_module)
-    {:ok, version} = get_value(attributes, :version)
-    {block_name, block_module, version}
-  end
+  # Set the value, based on the attribute class
+  defp set_class_value(:inputs, {_old_value, default_value}, new_value),
+    do: {new_value, default_value}
+
+  defp set_class_value(:outputs, {_old_value, links}, new_value), do: {new_value, links}
+  defp set_class_value(_class, _old_value, new_value), do: new_value
 
   @doc """
     Get an attribute value of any type
@@ -133,15 +154,13 @@ defmodule LinkBlox.Attributes do
     get_value(attributes, name)
   end
 
-  @doc """
-    Set an attribute value in the list of attributes
-  """
-  @spec set_value(attributes(), attribute_name(), attribute_value()) :: :ok | {:error, :error}
-  def set_value(attributes, attrib_name, attrib_value) do
-    case :ets.update_element(attributes, attrib_name, {3, attrib_value}) do
-      true -> :ok
-      # TODO: Be more specific about error? What does ets.lookup() return when not found, empty tuple?
-      _error -> {:error, :error}
-    end
+  # replace a value in the array of values
+  @spec replace_array_value(attribute_value_array(), array_index(), attribute_value()) ::
+          attribute_value_array()
+  defp replace_array_value(array_values, index, new_value) do
+    length = index - 1
+    :lists.sublist(array_values, length) ++
+      [new_value] ++
+      :lists.nthtail(index, array_values)
   end
 end

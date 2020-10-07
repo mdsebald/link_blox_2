@@ -14,7 +14,7 @@ defmodule LinkBlox.BuiltIns.Identity do
   """
   def create(attributes) do
     # Only has one input attribute
-    Attributes.add(attributes, :input, :inputs, :empty, %{default_value: :empty})
+    Attributes.create(attributes, :input, :inputs, {:empty, :empty})
     :ok
   end
 
