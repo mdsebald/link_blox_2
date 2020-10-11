@@ -11,7 +11,7 @@ defmodule LinkBlox do
   defmacro __using__(module_defs) do
     quote do
       require Logger
-      use LinkBlox.Types
+      use LinkBlox.DataTypes
       alias LinkBlox.{Common, Attributes, Configs, Inputs, Outputs}
 
       @doc """
@@ -42,8 +42,6 @@ defmodule LinkBlox do
         Create a set of block attributes for this block type
 
         Override this function to create the block type specific attributes
-
-        TODO: Pass in optional list of inititial values to override default values
       """
       @spec create(attributes()) :: :ok
       def create(attributes) do
@@ -149,37 +147,4 @@ defmodule LinkBlox do
       defoverridable create: 1, upgrade: 1, initialize: 1, execute: 2, delete: 1, handle_info: 2
     end
   end
-
-  @doc """
-    Return list of LinkBlox block type modules
-  """
-  @spec block_types() :: [atom()]
-  def block_types() do
-    []
-  end
-
-  @doc """
-    Add module_name to list of LinkBlox block types
-    Check to make sure module actually implements LinkBlox interface
-  """
-  @spec add_block_type(atom()) :: :ok | {:error, atom()}
-  def add_block_type(_module_name) do
-    :ok
-  end
-
-  @doc """
-    Remove module_name from list of LinkBlox block types
-  """
-  @spec remove_block_type(atom()) :: :ok | {:error, :not_found}
-  def remove_block_type(_module_name) do
-    :ok
-  end
-
-  #  def find_block_type_modules() do
-  #    with {:ok, list} <- Application.get_key(:my_app, :modules) do
-  #      list
-  #      |> Enum.filter(&(&1 |> Module.split() |> Enum.take(1) == ~w|UserHelpers|))
-  #      |> Enum.reduce(user_data, fn m, acc -> apply(m, :create, acc) end)
-  #    end
-  #  end
 end

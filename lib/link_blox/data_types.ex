@@ -1,4 +1,4 @@
-defmodule LinkBlox.Types do
+defmodule LinkBlox.DataTypes do
   @moduledoc """
     LinkBlox data types
   """

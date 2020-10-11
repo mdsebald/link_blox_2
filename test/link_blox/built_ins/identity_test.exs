@@ -16,5 +16,7 @@ defmodule LinkBloxTest.BuiltIns.IdentityTest do
     assert Attributes.set_value(attributes, :input, "this is a test") == :ok
     assert LinkBlox.BuiltIns.Identity.execute(attributes, :manual) == :ok
     assert Attributes.get_value(attributes, :value) == {:ok, "this is a test"}
+    assert Attributes.get_value(attributes, :status) == {:ok, :normal}
+    # assert Attributes.get_value(attributes, :exec_method) == {:ok, :manual}
   end
 end

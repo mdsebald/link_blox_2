@@ -1,5 +1,5 @@
 defmodule LinkBlox.Attributes do
-  use LinkBlox.Types
+  use LinkBlox.DataTypes
 
   @moduledoc """
     Common block attribute utility functions

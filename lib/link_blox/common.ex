@@ -1,5 +1,5 @@
 defmodule LinkBlox.Common do
-  use LinkBlox.Types
+  use LinkBlox.DataTypes
   alias LinkBlox.Attributes
 
   @moduledoc """

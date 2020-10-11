@@ -1,5 +1,5 @@
 defmodule LinkBlox.Outputs do
-  use LinkBlox.Types
+  use LinkBlox.DataTypes
   alias LinkBlox.Attributes
 
   @moduledoc """
@@ -33,6 +33,19 @@ defmodule LinkBlox.Outputs do
   def set_status(attributes, status) do
     Attributes.set_value(attributes, :status, status)
   end
+
+
+  @doc """
+    Get status output attribute value
+  """
+  @spec get_status(attributes()) :: block_status() | :error
+  def get_status(attributes) do
+    case Attributes.get_value(attributes, :status) do
+      {:ok, status} -> status
+      {:error, _reason} -> :error
+    end
+  end
+
 
   @doc """
     Set all block outputs to the given value
