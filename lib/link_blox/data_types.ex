@@ -28,20 +28,25 @@ defmodule LinkBlox.DataTypes do
       @type attribute_class() :: :configs | :inputs | :outputs | :private
 
       @typedoc "Attribute value is of attribute value type or list of attribute value types"
-      @type attribute_value_array() :: [attribute_value()]
-      @type attribute_value() :: config_value() | input_value() | output_value() | private_value()
+      @type attribute_value() :: attribute_value_single() | attribute_value_array()
+      @type attribute_value_array() :: [attribute_value_single()]
+      @type attribute_value_single() :: config_value_single() | input_value_single() | output_value_single() | private_value_single()
 
+      @type config_value() :: config_value_single() | config_value_array()
       @type config_value_array() :: [config_value()]
-      @type config_value() :: value()
+      @type config_value_single() :: value()
 
-      @type input_value_array() :: [input_value()]
-      @type input_value() :: {value(), default_value :: value()}
+      @type input_value() :: input_value_single() | input_value_array()
+      @type input_value_array() :: [input_value_single()]
+      @type input_value_single() :: {value(), default_value :: value()}
 
-      @type output_value_array() :: [output_value()]
-      @type output_value() :: {value(), link_defs()}
+      @type output_value() :: output_value_single() | output_value_array()
+      @type output_value_array() :: [output_value_single()]
+      @type output_value_single() :: {value(), link_defs()}
 
-      @type private_value_array() :: [private_value()]
-      @type private_value() :: any()
+      @type private_value() :: private_value_single() | private_value_array()
+      @type private_value_array() :: [private_value_single()]
+      @type private_value_single() :: any()
 
       @type link_defs() :: [link_def()]
       @type link_def() :: {block_name(), attribute_id()}

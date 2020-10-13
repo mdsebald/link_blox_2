@@ -62,6 +62,15 @@ defmodule LinkBlox.Attributes do
   end
 
   @doc """
+    Get the attribute names and values for the given class
+    Returns a list of atrribute name, attribute value lists
+  """
+  @spec get_class_values(attributes(), attribute_class()) :: list(list(term())) | []
+  def get_class_values(attributes, class) do
+    :ets.match(attributes, {:"$1", class, :"$2", :_})
+  end
+
+  @doc """
     Get an attribute value from the block attributes
   """
   @spec get_value(attributes(), attribute_id()) ::

@@ -49,12 +49,30 @@ defmodule LinkBlox.Outputs do
 
   @doc """
     Set all block outputs to the given value
-    Except the status output
+    Except set the status output to the given status
+    Used to mass update block outputs in disabled or error conditions
   """
-  @spec update_all_outputs(attributes(), value(), block_status()) ::
-          :ok | {:error, :error}
-  def update_all_outputs(attributes, _value, status) do
-    # TODO: Get a list of all of the output attributes and set the value
-    Attributes.set_value(attributes, :status, status)
+  @spec update_all_outputs(attributes(), value(), block_status()) :: :ok
+  def update_all_outputs(attributes, new_value, new_status) do
+    output_attributes = Attributes.get_class_values(attributes, :outputs)
+    Enum.each(output_attributes,
+      fn attribute ->
+        case attribute do
+          [:status, {_old_value, _links}] -> Attributes.set_value(attributes, :status, new_status)
+          [name, {_old_value, _links}] -> Attributes.set_value(attributes, name, new_value)
+          [name, array_values] -> update_all_array_values(attributes, name, array_values, new_value)
+        end
+      end)
+    :ok
+  end
+
+  # Set all of the values in the array to the new value
+  @spec update_all_array_values(attributes(), attribute_name(), output_value_array(), value()) :: :ok
+  defp update_all_array_values(attributes, name, array_values, new_value) do
+    Enum.map_reduce(array_values, 0,
+      fn {_old_value, _links}, index ->
+        Attributes.set_value(attributes, {name, index+1}, new_value)
+      end)
+    :ok
   end
 end
